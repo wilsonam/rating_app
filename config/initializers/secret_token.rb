@@ -9,4 +9,20 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-RatingApp::Application.config.secret_key_base = '1bfeaa8c2d69cd96512f256b55b5dca8c03206f364d6eb0114aa8e2ede72b8282d055b13e474723fd3794f7f0d1c30089e536faee1af1ddb094752896ff7adb7'
+
+require 'securerandom'
+
+def secure_token
+  token_file = Rails.root.join('.secret')
+  if File.exist?(token_file)
+    # Use the existing token.
+    File.read(token_file).chomp
+  else
+    # Generate a new token and store it in token_file.
+    token = SecureRandom.hex(64)
+    File.write(token_file, token)
+    token
+  end
+end
+
+RatingApp::Application.config.secret_key_base = secure_token
